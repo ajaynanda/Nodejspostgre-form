@@ -24,7 +24,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(flash())
-app.get("/",checkAuthenticated,(req,res)=>{
+app.get("/",checkNotAuthenticated,(req,res)=>{
   res.render("index")
 })
 app.get("/login",checkAuthenticated,(req,res)=>{
@@ -32,14 +32,16 @@ app.get("/login",checkAuthenticated,(req,res)=>{
     res.render("login.ejs")
 })
 
+
+app.get("/dashboard",checkAuthenticated,(req,res)=>{
+    console.log(req.isAuthenticated());
+    res.render("dashboard",{user: "ajay"} )
+});
 app.get("/logout",(req,res)=>{
     req.logOut()
-    req.flash("success_msg", "you have logged out")
-    res.redirect("login")
+  res.render("login.ejs")
+  req.flash({message:"you have logged out"})
 })
-app.get("/dashboard",checkNotAuthenticated,(req,res)=>{
-    res.render("dashboard",{user: req.user.name} )
-});
 
 app.post("/login",async(req,res)=>{
     let{name , phone , email , password} = req.body;
@@ -108,8 +110,8 @@ else{
 //passport authentication
 
 app.post("/login",passport.authenticate("local",{
-successRedirect: "dashboard",
-failureRedirect: "login",
+successRedirect: "/dashboard",
+failureRedirect: "/login",
 failureFlash:true
 
 
@@ -117,15 +119,16 @@ failureFlash:true
 )
 function checkAuthenticated(req,res,next){
     if(req.isAuthenticated()){
-        res.redirect("dashboard.ejs")
+      return  res.redirect("/dashboard")
     }
     next()
 }
 function checkNotAuthenticated(req,res,next){
     if(req.isAuthenticated()){
-        res.redirect("login.ejs")
-   
+        return next()
     }
+   
+   res.redirect("/login")
    
 }
 
@@ -137,5 +140,5 @@ pool.query(`select * from students`,(err,results)=>{
     if(err){
         console.log("404 found");
     }
-    
+   
 })

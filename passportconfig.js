@@ -22,6 +22,7 @@ function initialize(passport){
             return done(null,user);
     }else{
         return done(null,false,{message:"password is not correct"})
+       
       
     }
  }) 
