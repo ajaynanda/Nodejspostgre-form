@@ -29,7 +29,7 @@ app.get("/",checkAuthenticated,(req,res)=>{
 })
 app.get("/login",checkAuthenticated,(req,res)=>{
   
-    res.render("login")
+    res.render("login.ejs")
 })
 
 app.get("/logout",(req,res)=>{
@@ -38,7 +38,7 @@ app.get("/logout",(req,res)=>{
     res.redirect("login")
 })
 app.get("/dashboard",checkNotAuthenticated,(req,res)=>{
-    res.render("dashboard",{user:"ajay"} )
+    res.render("dashboard",{user: req.user.name} )
 });
 
 app.post("/login",async(req,res)=>{
@@ -69,7 +69,7 @@ errors.push({message:"Please enter valid phone number"})
             email,
             password
         }); 
-    //to store hasshpassword in database
+    //to store hashedpassword in database
         let hashpwd= await bcrypt.hash(password,10);
         console.log(hashpwd);
     
@@ -95,7 +95,6 @@ else{
     [name,phone,email,hashpwd],(err,results)=>{
         if(err)  throw err
         console.log("Saved to database");
-        console.log(results.rows);
         req.flash('success_msg',"You have successfully registered..... please log in")
         res.redirect("login")
     }
@@ -109,8 +108,8 @@ else{
 //passport authentication
 
 app.post("/login",passport.authenticate("local",{
-successRedirect: "/dashboard",
-failureRedirect: "/login",
+successRedirect: "dashboard",
+failureRedirect: "login",
 failureFlash:true
 
 
@@ -118,16 +117,16 @@ failureFlash:true
 )
 function checkAuthenticated(req,res,next){
     if(req.isAuthenticated()){
-        res.redirect("/dashboard")
+        res.redirect("dashboard.ejs")
     }
     next()
 }
 function checkNotAuthenticated(req,res,next){
     if(req.isAuthenticated()){
-    
-    return next()
+        res.redirect("login.ejs")
+   
     }
-    res.redirect("/login")
+   
 }
 
 pool.connect();
@@ -138,5 +137,5 @@ pool.query(`select * from students`,(err,results)=>{
     if(err){
         console.log("404 found");
     }
-    pool.end()
+    
 })

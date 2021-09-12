@@ -1,5 +1,5 @@
 const LocalStrategy=require("passport-local").Strategy
-const {Pool, pool}=require("./dbconfig")
+const { pool}=require("./dbconfig")
 const bcrypt = require("bcrypt")
 
 function initialize(passport){
@@ -22,6 +22,7 @@ function initialize(passport){
             return done(null,user);
     }else{
         return done(null,false,{message:"password is not correct"})
+      
     }
  }) 
             } else{
@@ -44,4 +45,6 @@ function initialize(passport){
     }
     )
 }
-module.exports =  initialize 
+
+
+module.exports = initialize
