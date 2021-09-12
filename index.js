@@ -88,6 +88,7 @@ if(results.rows.length > 0){
 }
 //storing data to database
 else{
+    
    pool.query( `INSERT INTO students (name,phone,email,password)
     VALUES($1,$2,$3,$4)
     RETURNING id, password`,
@@ -129,4 +130,13 @@ function checkNotAuthenticated(req,res,next){
     res.redirect("/login")
 }
 
-
+pool.connect();
+pool.query(`select * from students`,(err,results)=>{
+    if (!err){
+        console.log(results.rows);
+    }
+    if(err){
+        console.log("404 found");
+    }
+    pool.end()
+})
