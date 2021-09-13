@@ -24,7 +24,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(flash())
-app.get("/",checkNotAuthenticated,(req,res)=>{
+app.get("/",checkAuthenticated,(req,res)=>{
   res.render("index")
 })
 app.get("/login",checkAuthenticated,(req,res)=>{
@@ -109,10 +109,10 @@ else{
 })
 //passport authentication
 
-app.post("/login",passport.authenticate("local",{
-successRedirect: "/dashboard",
-failureRedirect: "/login",
-failureFlash:true
+app.post("/dashboard",passport.authenticate("local",{
+successRedirect: "dashboard",
+failureRedirect: "login",
+failureFlash:false
 
 
 })
